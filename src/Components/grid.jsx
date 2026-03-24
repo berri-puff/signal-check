@@ -11,10 +11,34 @@ const Grid = ({ processedSignals }) => {
     let peaksCount = 0;
     let signalChainsCount = 0;
     const trailheadMap = {};
+    
+    const validNewCoordinates = (newRow, newColumn) => { 
+      const inRowRange = newRow >= 0 && newRow < rowCount
+      const inColumnRange = newColumn >= 0 && newColumn < columnCount 
+      
+      return inRowRange && inColumnRange ? true : false
+    }
+    
+    const getValidNeighbours = (row, column) => {
+      const validNeighbours = []
+      for (const [dirRow, dirCol] of directions) {
+        const newRow = row + dirRow;
+        const newColumn = column + dirCol;
+
+        if (validNewCoordinates(newRow, newColumn)) {
+          if (grid[newRow][newColumn] === grid[row][column] + 1 || grid[newRow][newColumn] === grid[row][column] - 1) {
+            validNeighbours.push([newRow, newColumn]);
+          }
+        }
+
+      }
+      return validNeighbours
+    }
 
     const calculatePeaks = (row, column, peakCoordinates) => {
       if (grid[row][column] === 9) {
-        peakCoordinates.add(`${row},${column}`);
+        const coord = `${row},${column}`;
+        peakCoordinates.add(coord);
         return;
       }
 
@@ -22,7 +46,7 @@ const Grid = ({ processedSignals }) => {
         const newRow = row + dirRow;
         const newColumn = column + dirCol;
 
-        if (newRow >= 0 && newRow < rowCount && newColumn >= 0 && newColumn < columnCount) {
+        if (validNewCoordinates(newRow, newColumn)) {
           if (grid[newRow][newColumn] === grid[row][column] + 1) {
             calculatePeaks(newRow, newColumn, peakCoordinates);
           }
@@ -42,7 +66,7 @@ const Grid = ({ processedSignals }) => {
         const newRow = row + dirRow;
         const newColumn = column + dirCol;
 
-        if (newRow >= 0 && newRow < rowCount && newColumn >= 0 && newColumn < columnCount) {
+        if (validNewCoordinates(newRow, newColumn)) {
           if (grid[newRow][newColumn] === grid[row][column] + 1) {
             paths += calculateSignalChains(newRow, newColumn, currentPathIteration, allPathsForThisTrailhead);
           }
@@ -51,13 +75,14 @@ const Grid = ({ processedSignals }) => {
       return paths;
     };
 
+    
     for (let row = 0; row < rowCount; row++) {
       for (let column = 0; column < columnCount; column++) {
+        const peakCoordinates = new Set();
+        const allPathsForThisTrailhead = [];
         if (grid[row][column] === 0) {
-          const peakCoordinates = new Set();
           calculatePeaks(row, column, peakCoordinates);
 
-          const allPathsForThisTrailhead = [];
           const validSignalChainPaths = calculateSignalChains(row, column, [], allPathsForThisTrailhead);
 
           peaksCount += peakCoordinates.size;
@@ -65,7 +90,16 @@ const Grid = ({ processedSignals }) => {
 
           trailheadMap[`${row},${column}`] = {
             isTrailhead: peakCoordinates.size > 0 ? true : false,
-            paths: allPathsForThisTrailhead 
+            paths: allPathsForThisTrailhead ,
+            isAPeak: grid[row][column] === 9 && peakCoordinates.size > 0 ? true: false,
+            validNeighbours: getValidNeighbours(row, column)
+          };
+        } else {
+            trailheadMap[`${row},${column}`] = {
+            isTrailhead: false,
+            paths: allPathsForThisTrailhead ,
+            isAPeak: grid[row][column] === 9 && peakCoordinates.size > 0 ? true: false,
+            validNeighbours: getValidNeighbours(row, column)
           };
         }
       }
