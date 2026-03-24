@@ -1,32 +1,49 @@
 import { useState } from 'react'
-import reactLogo from './assets/react.svg'
 import './App.css'
 
 function App() {
-  const [count, setCount] = useState(0)
+  const maxCount = 60 // Maximum number of cells for both rows and columns
+
+  const [signalValues, setSignalValues] = useState("");
+  const [processedSignals, setProcessedSignals] = useState([])
+  const [generateGrid, setGenerateGrid] = useState(false)
+
+  const handleTextChange = (event) => {
+    setSignalValues(event.target.value);
+  };
+
+  const isValidInput = (signals) => {
+    const numbersRegex = /^[0-9]+$/
+    const onlyNumbers = signals.map((signal) => numbersRegex.test(signal))
+    const isSameLength = signals.every(({length}) => length != signals[0])
+    const isAboveMax = signals.length <= maxCount && signals[0].length >= maxCount
+    
+    if (onlyNumbers.includes(false) || isSameLength === false || isAboveMax){
+      console.log("display error feedback here, only numbers are allowed")
+      return false
+    }
+    else {
+      return true
+    }
+  }
+
+  const processSignalInputs = () => {
+    const signalValueArray = signalValues.trim().split("\n")
+    
+    if (isValidInput(signalValueArray)) {
+      const newInput = signalValueArray.map(row => row.split('').map(Number));
+      setProcessedSignals(newInput)
+      setGenerateGrid(true)
+    }
+  }
 
   return (
     <div className="App">
       <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src="/vite.svg" className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://reactjs.org" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
+        <h1>Enter Signal Values</h1>
+          <textarea rows={10} cols={30} values={signalValues}  onChange={(e) => {handleTextChange(e)}} />
+          <button onClick={() => {processSignalInputs()}}>Confirm</button>
       </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
     </div>
   )
 }
