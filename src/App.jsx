@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import './App.css'
+import Grid from './Components/grid';
 
 function App() {
   const maxCount = 60 // Maximum number of cells for both rows and columns
@@ -44,6 +45,17 @@ function App() {
           <textarea rows={10} cols={30} values={signalValues}  onChange={(e) => {handleTextChange(e)}} />
           <button onClick={() => {processSignalInputs()}}>Confirm</button>
       </div>
+
+      {
+        generateGrid && processedSignals.length !== 0 ? (
+        <Grid 
+        processedSignals={processedSignals}/>) :
+        (
+          <div>
+            <h1>Start by adding some signal values</h1>
+          </div>
+        )
+      }
     </div>
   )
 }
