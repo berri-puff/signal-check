@@ -1,116 +1,106 @@
-import { useMemo, useEffect, useState, startTransition } from "react"
+import { useMemo } from "react"
 import Cell from "./cell";
 
-const Grid = ( {processedSignals} ) => {
-  const grid = processedSignals
+const Grid = ({ processedSignals }) => {
+  const grid = processedSignals;
   const rowCount = processedSignals?.length || 0;
   const columnCount = processedSignals[0]?.length || 0;
-  let peaksFound = 0
-  let signalChains = 0 
-  const directions = [[-1, 0], [1,0], [0, -1], [0,1]] // Allow movement for up, down, left and right
+  const directions = [[-1, 0], [1, 0], [0, -1], [0, 1]]; // up, down, left, right
 
-  /*
-    0123
-    1234
-    8765
-    9876
-  */
+  const { trailheadData, totalPeaks, totalSignalChains } = useMemo(() => {
+    let peaksCount = 0;
+    let signalChainsCount = 0;
+    const trailheadMap = {};
 
-    useMemo(() => {
-      const coords = [];
-        for (let r = 0; r < rowCount; r++) {
-          for (let c = 0; c < columnCount; c++) {
-            coords.push([r, c]);
-          }
-        }
-        return coords;
-    }, [processedSignals, rowCount, columnCount]);
+    const calculatePeaks = (row, column, peakCoordinates) => {
+      if (grid[row][column] === 9) {
+        peakCoordinates.add(`${row},${column}`);
+        return;
+      }
 
-    
-    useMemo(()=> {
-      const calculatePeaks = (row, column, peakCoordinates) => {
-        // calculate reachable peaks and store it 
-        if (grid[row][column] === 9) {
-          peakCoordinates.add(`${row},${column}`)
-          return
-        } 
+      for (const [dirRow, dirCol] of directions) {
+        const newRow = row + dirRow;
+        const newColumn = column + dirCol;
 
-        for (const [dirRow, dirCol] of directions) {
-          const newRow = row + dirRow
-          const newColumn = column + dirCol
-
-          if (newRow >= 0 && newRow < rowCount && newColumn >= 0 && newColumn < columnCount) {
-              if (grid[newRow][newColumn] === grid[row][column] + 1) {
-                calculatePeaks(newRow, newColumn, peakCoordinates)
-              }
+        if (newRow >= 0 && newRow < rowCount && newColumn >= 0 && newColumn < columnCount) {
+          if (grid[newRow][newColumn] === grid[row][column] + 1) {
+            calculatePeaks(newRow, newColumn, peakCoordinates);
           }
         }
       }
+    };
 
-      const calculateSignalChains = (row, column) =>{
-        // store the signal chains for a specific 0 
-        if (grid[row][column] === 9) return 1;
-        
-        let paths = 0
+    const calculateSignalChains = (row, column, currentPath, allPathsForThisTrailhead) => {
+      const currentPathIteration = [...currentPath, [row, column]];
+      if (grid[row][column] === 9) {
+        allPathsForThisTrailhead.push(currentPathIteration);
+        return 1;
+      }
 
-        for (const [dirRow, dirCol] of directions) {
-          const newRow = row + dirRow
-          const newColumn = column + dirCol
+      let paths = 0;
+      for (const [dirRow, dirCol] of directions) {
+        const newRow = row + dirRow;
+        const newColumn = column + dirCol;
 
-          if (newRow >= 0 && newRow < rowCount && newColumn >= 0 && newColumn < columnCount) {
-              if (grid[newRow][newColumn] === grid[row][column] + 1) {
-                paths += calculateSignalChains(newRow,newColumn)
-              }
+        if (newRow >= 0 && newRow < rowCount && newColumn >= 0 && newColumn < columnCount) {
+          if (grid[newRow][newColumn] === grid[row][column] + 1) {
+            paths += calculateSignalChains(newRow, newColumn, currentPathIteration, allPathsForThisTrailhead);
           }
         }
-        return paths
       }
+      return paths;
+    };
 
-      for (let row = 0; row < rowCount; row++) {
-        for (let column = 0; column < columnCount; column++) {
-            if (grid[row][column] === 0) {
-              const peakCoordinates = new Set()
-              calculatePeaks(row, column, peakCoordinates)
-              peaksFound += peakCoordinates.size
-              // store theses values against the current [row][column]
-              signalChains += calculateSignalChains(row, column)
+    for (let row = 0; row < rowCount; row++) {
+      for (let column = 0; column < columnCount; column++) {
+        if (grid[row][column] === 0) {
+          const peakCoordinates = new Set();
+          calculatePeaks(row, column, peakCoordinates);
 
-            }
+          const allPathsForThisTrailhead = [];
+          const validSignalChainPaths = calculateSignalChains(row, column, [], allPathsForThisTrailhead);
+
+          peaksCount += peakCoordinates.size;
+          signalChainsCount += validSignalChainPaths;
+
+          trailheadMap[`${row},${column}`] = {
+            isTrailhead: peakCoordinates.size > 0 ? true : false,
+            paths: allPathsForThisTrailhead 
+          };
         }
       }
-    }, [grid, rowCount, columnCount])
-
-  return(
-    <div>
-      {
-        processedSignals.map((row, rIndex) => {
-            return (
-                <div className="row" key={rIndex}>
-                    {row.map((value, cIndex) => {
-                        return (
-                            <div 
-                                className="box"
-                                key={cIndex}
-                            >
-                                <Cell
-                                    signalValue={value}
-                                    row={rIndex}
-                                    column={cIndex}
-                                />
-                            </div>
-                            );
-                        })}
-                </div>
-            );
-        })
     }
-    <div>
-        <h3>Results</h3>
-        <h4>Peaks: {peaksFound}</h4>
-        <h4>Distinct Chains: {signalChains}</h4>
-    </div>
-    </div>
-  )
-}
 
-export default Grid
+    return {
+      trailheadData: trailheadMap,
+      totalPeaks: peaksCount,
+      totalSignalChains: signalChainsCount
+    };
+  }, [grid, rowCount, columnCount]);
+
+  return (
+    <div>
+      {processedSignals.map((row, rIndex) => (
+        <div className="row" key={rIndex}>
+          {row.map((value, cIndex) => (
+            <div className="box" key={cIndex}>
+              <Cell
+                signalValue={value}
+                row={rIndex}
+                column={cIndex}
+                trailheadInfo={trailheadData[`${rIndex},${cIndex}`]}
+              />
+            </div>
+          ))}
+        </div>
+      ))}
+      <div>
+        <h3>Results</h3>
+        <h4>Total Peaks: {totalPeaks}</h4>
+        <h4>Total Distinct Chains: {totalSignalChains}</h4>
+      </div>
+    </div>
+  );
+};
+
+export default Grid;
