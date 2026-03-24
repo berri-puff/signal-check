@@ -2,22 +2,98 @@ import { useState } from "react"
 
 const Cell = ({row, column, signalValue, trailheadInfo}) => {
 
-  // find valid neighbours here ?? 
-  if (trailheadInfo) {
-    console.log(`Trailhead at ${row},${column}: trialhead ${trailheadInfo.isTrialhead}, paths ${trailheadInfo.paths.length}`)
-  }
+  const [seeToolTip, setToolTip] = useState(false)
+  const [mouseLocation, setMouseLocation] = useState({x: 0, y: 0})
+  const [displaySignalDetails, setDisplaySignalDetails] = useState(false)
 
   const displayDetails = () => {
-    console.log("display details")
+    console.log(trailheadInfo.neighbours)
+    setDisplaySignalDetails(true)
   }
 
+  const displayHoverDetails = (event) => {
+    setMouseLocation({
+    x: event.pageX,
+    y: event.pageY,
+    });
+    setToolTip(true);
+  }
+
+  const formatPathCoords = (path) => {
+    let pathString = ""
+    for (let row = 0; row < path.length; row++) {
+      for (let col = 0; col < path[row].length; col++) {
+        pathString += "(" + row + "," + col + ")";
+      }
+    }
+    return pathString
+  }
+
+  const returnPeakOrTrailheadStatement = () => {
+    if (trailheadInfo.isTrailhead) {
+      return "trailhead"
+    }
+    else if (trailheadInfo.isAPeak) {
+      return "Peak"
+    } else {
+      return "simple plain number"
+    }
+  }
+ 
   return(
     <>
-      <p onClick={()=> {displayDetails()}}
-        onMouseEnter={() => console.log("hover")}
-        >{signalValue}
-        <span>({row},{column})</span>
-      </p>
+      <div
+        onMouseEnter={(event) => displayHoverDetails(event)}
+        onMouseLeave={() => setToolTip(false)}
+        onClick={()=> {displayDetails()}}
+      >
+        <p >{signalValue}</p>
+        <div
+          className="tooltip"
+          style={{
+            display: seeToolTip ? "block" : "none",
+            position: "fixed",
+            top: mouseLocation.y,
+            left: mouseLocation.x,
+          }}
+        >
+          <strong>Co-ordinates: <span>({row}, {column})</span></strong>
+          <p>Click to see more</p>
+        </div>
+      </div>
+
+      {displaySignalDetails && (
+      <div className="detailModal">
+        <button onClick={() => setDisplaySignalDetails(false)} >Close</button>
+        <h3>Further Details:</h3>
+        <p>Coordinates: ({row}, {column})</p>
+        <p>This is a {returnPeakOrTrailheadStatement()}</p>
+        <strong>Valid neighbours coordinates:</strong>
+        {trailheadInfo.neighbours.length > 0 &&
+          trailheadInfo.neighbours.map((neighbour) => {
+            return(
+              <div>
+              <li>
+                {"(" + neighbour.toString(",") + ")"}
+              </li>
+              </div>
+            )
+          })
+        }
+        <strong>Valid Paths to a peak</strong>
+        {trailheadInfo.paths.length > 0 &&
+          trailheadInfo.paths.map((path) => {
+            return(
+              <div>
+              <li>
+                {formatPathCoords(path)}
+              </li>
+              </div>
+            )
+          })
+        }
+     </div>
+      )}
     </>
   )
 }

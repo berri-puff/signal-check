@@ -75,7 +75,6 @@ const Grid = ({ processedSignals }) => {
       return paths;
     };
 
-    
     for (let row = 0; row < rowCount; row++) {
       for (let column = 0; column < columnCount; column++) {
         const peakCoordinates = new Set();
@@ -92,14 +91,14 @@ const Grid = ({ processedSignals }) => {
             isTrailhead: peakCoordinates.size > 0 ? true : false,
             paths: allPathsForThisTrailhead ,
             isAPeak: grid[row][column] === 9 && peakCoordinates.size > 0 ? true: false,
-            validNeighbours: getValidNeighbours(row, column)
+            neighbours: getValidNeighbours(row, column)
           };
         } else {
             trailheadMap[`${row},${column}`] = {
             isTrailhead: false,
-            paths: allPathsForThisTrailhead ,
+            paths: allPathsForThisTrailhead,
             isAPeak: grid[row][column] === 9 && peakCoordinates.size > 0 ? true: false,
-            validNeighbours: getValidNeighbours(row, column)
+            neighbours: getValidNeighbours(row, column)
           };
         }
       }
