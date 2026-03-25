@@ -173,3 +173,40 @@ body {
 .short-line {
   width: 150px;
 }
+
+.error-container { 
+  display: block;
+  justify-self: center;
+  border: #6c0102 2px solid;
+  height: 50px;
+  width: fit-content;
+  padding: 5px 12px;
+  border-radius: 10px;
+}
+
+.error-container-enter {
+  opacity: 0;
+  transform: translateY(-10px);
+}
+
+.error-container-enter-active {
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity 300ms, transform 300ms;
+}
+
+.error-container-exit {
+  opacity: 1;
+}
+
+.error-container-exit-active {
+  opacity: 0;
+  transform: translateY(-10px);
+  transition: opacity 300ms, transform 300ms;
+}
+
+.error-message {
+  color: #6c0102;
+  font-size: medium;
+  font-weight: 500;
+}
