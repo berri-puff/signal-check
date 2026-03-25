@@ -88,7 +88,6 @@ body {
 }
 
 .button {
-  background: #b3e7dc;
   border-radius: 8px;
   color: black;
   cursor: pointer;
@@ -99,6 +98,15 @@ body {
   border: none;
   height: fit-content;
   margin-left: 20px;
+}
+
+.confirm {
+  background: #b3e7dc;
+}
+
+.clear {
+  background: #6c0102;
+  color: white
 }
 
 .grid-info-container {

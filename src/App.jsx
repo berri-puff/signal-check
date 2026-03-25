@@ -23,6 +23,11 @@ function App() {
     }, 3000);                                                                                                                                                    
   };                                                                                                                                                             
 
+  const clearInput = () => {
+    setSignalValues("")
+    setProcessedSignals([])
+    setGenerateGrid(false)
+  }
 
   const isValidInput = (signals) => {
     const numbersRegex = /^[0-9]+$/
@@ -65,12 +70,13 @@ function App() {
          <p className="error-message">{errorMessage}</p> 
         </div>
       </CSSTransition>
-      
-      <h1 className="main-header">Enter Signal Values</h1>
-      <p>Please enter only digits between 1 and 60</p>
+
+      <h1 className="main-header">Enter Signals</h1>
+      <p>Please enter a maximum of 60 digits between 1 to 9</p>
       <div className="signal-input-container">
         <textarea className="signal-input-area" rows={8} cols={60} value={signalValues} onChange={(e) => {handleTextChange(e)}} />
-        <button className="button" onClick={() => {processSignalInputs()}}>Confirm</button>
+        <button className="button confirm" onClick={() => {processSignalInputs()}}>Confirm</button>
+        <button className="button clear" onClick={clearInput}>Clear</button>
       </div>
 
       {
