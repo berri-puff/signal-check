@@ -1,5 +1,5 @@
 import { useMemo } from "react"
-import Cell from "./cell";
+import Cell from "./signalCell";
 
 const Grid = ({ processedSignals }) => {
   const grid = processedSignals;

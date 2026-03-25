@@ -1,6 +1,6 @@
 import { useState } from "react"
 
-const Cell = ({row, column, signalValue, trailheadInfo}) => {
+const signalCell = ({row, column, signalValue, trailheadInfo}) => {
 
   const [seeToolTip, setToolTip] = useState(false)
   const [mouseLocation, setMouseLocation] = useState({x: 0, y: 0})
@@ -98,4 +98,4 @@ const Cell = ({row, column, signalValue, trailheadInfo}) => {
   )
 }
 
-export default Cell
+export default signalCell
