@@ -1,11 +1,10 @@
-import { useEffect, useState } from "react"
-import { FaCaretUp, FaCaretDown} from "react-icons/fa";
+import { useState } from "react"
+import PathSummary from "./pathSummary";
 
 const signalCell = ({row, column, signalValue, trailheadInfo}) => {
   const [seeToolTip, setToolTip] = useState(false)
   const [mouseLocation, setMouseLocation] = useState({x: 0, y: 0})
   const [displaySignalDetails, setDisplaySignalDetails] = useState(false)
-  const [seePathDetails, setSeePathDetails] = useState(false)
 
   const displayDetails = () => {
     setDisplaySignalDetails(true)
@@ -19,16 +18,6 @@ const signalCell = ({row, column, signalValue, trailheadInfo}) => {
     setToolTip(true);
   }
 
-  const formatPathCoords = (path) => {
-    let pathString = ""
-    for (let row = 0; row < path.length; row++) {
-      for (let col = 0; col < path[row].length; col++) {
-        pathString += "(" + row + "," + col + ")";
-      }
-    }
-    return pathString
-  }
-
   const returnPeakOrTrailheadStatement = () => {
     if (trailheadInfo.isTrailhead) {
       return "trailhead"
@@ -37,17 +26,6 @@ const signalCell = ({row, column, signalValue, trailheadInfo}) => {
       return "Peak"
     } else {
       return "simple plain number"
-    }
-  }
-
-  const displayPaths = () => {
-    const pathDetailContainer = document.getElementById("pathDetails")
-    if (seePathDetails) {
-      pathDetailContainer.classList.add("hidden")
-      setSeePathDetails(false) 
-    } else {
-      pathDetailContainer.classList.remove("hidden")
-      setSeePathDetails(true)
     }
   }
  
@@ -92,23 +70,8 @@ const signalCell = ({row, column, signalValue, trailheadInfo}) => {
           })
         }
         {
-          trailheadInfo.isTrailhead ? 
-          <>
-            <strong>Valid Paths to a peak</strong>
-            <button onClick={() => { displayPaths(); } }>Expand {seePathDetails ? <FaCaretUp /> : <FaCaretDown />}</button>
-            <div id="pathDetails" className="hidden">
-              {trailheadInfo.paths.length > 0 &&
-                trailheadInfo.paths.map((path) => {
-                  return (
-                    <div>
-                      <li>
-                        {formatPathCoords(path)}
-                      </li>
-                    </div>
-                  );
-                })}
-            </div>
-          </> : null
+          trailheadInfo.isTrailhead ? <PathSummary paths={trailheadInfo.paths}/>
+          : null
         }
      </div>
       )}
