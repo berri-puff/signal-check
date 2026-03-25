@@ -30,7 +30,7 @@ const signalCell = ({row, column, signalValue, trailheadInfo}) => {
   }
  
   return(
-    <div className="innerContainer">
+    <div className="inner-cell-container">
       <div
         onMouseEnter={(event) => displayHoverDetails(event)}
         onMouseLeave={() => setToolTip(false)}
@@ -46,34 +46,40 @@ const signalCell = ({row, column, signalValue, trailheadInfo}) => {
             left: mouseLocation.x,
           }}
         >
-          <strong>Co-ordinates: <span>({row}, {column})</span></strong>
+          <p><strong>Co-ordinates: <span>({row}, {column})</span></strong></p>
           <p>Click to see more</p>
         </div>
       </div>
 
       {displaySignalDetails && (
-      <div className="detailModal">
-        <button onClick={() => setDisplaySignalDetails(false)} >Close</button>
-        <h3>Further Details:</h3>
-        <p>Coordinates: ({row}, {column})</p>
-        <p>This is a {returnPeakOrTrailheadStatement()}</p>
-        <strong>Valid neighbours coordinates:</strong>
-        {trailheadInfo.neighbours.length > 0 &&
-          trailheadInfo.neighbours.map((neighbour) => {
-            return(
-              <div>
-              <li>
-                {"(" + neighbour.toString(",") + ")"}
-              </li>
-              </div>
-            )
-          })
-        }
-        {
-          trailheadInfo.isTrailhead ? <PathSummary paths={trailheadInfo.paths}/>
-          : null
-        }
-     </div>
+      <div className="detail-modal">
+        <div className="detail-modal-info">
+          <button className="close-modal-button" onClick={() => setDisplaySignalDetails(false)} >Close</button>
+
+          <div className="details-container"> 
+            <h3 className="emphasis">This is a {returnPeakOrTrailheadStatement()}</h3>
+            <p>Co-ordinates: ({row}, {column})</p>
+            <strong>Valid neighbours coordinates</strong>
+            <hr/>
+            {trailheadInfo.neighbours.length > 0 &&
+              trailheadInfo.neighbours.map((neighbour) => {
+                return(
+                  <div>
+                  <p>
+                    {"(" + neighbour.toString(",") + ")"}
+                  </p>
+                  </div>
+                )
+              })
+            }
+            
+            {
+              trailheadInfo.isTrailhead ? <PathSummary paths={trailheadInfo.paths}/>
+              : null
+            }
+          </div>
+        </div>
+      </div>
       )}
     </div>
   )

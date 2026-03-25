@@ -1,8 +1,7 @@
-#root {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
-  text-align: center;
+body {
+  font-family: Roboto, sans-serif;
+  padding-top: 45px;
+  margin: 0 100px;
 }
 
 .row {
@@ -14,45 +13,57 @@
   height: 60px;
   background-color: white;
   color: black;
+  border: 1px solid #6c0102;
 }
 
 .tooltip {
-  background-color: white;
-  width:100px;
-  height: 100px;
-  border-radius: 20%;
-  border: 1px black solid;
+  background-color: #b3e7dc;
+  width:fit-content;
+  height: fit-content;
+  border-radius: 10%;
+  padding: 10px 10px;
   .p {
     color: black
   }
 }
 
-.detailModal {
+.detail-modal {
   align-items: center;
-  background: white;
   inset: 0;
-  display: block;
+  display: flex;
   justify-content: center;
   position: fixed;
   z-index: 2000;
-  margin: 300px;
+  background-color: rgba(0, 0, 0, 0.8);
+}
+
+.detail-modal-info {
+  background-color: white;
+  width: 40vw;
+  height: 40vh;
+  padding: 15px;
+  border-radius: 10px;
+  overflow-y: auto;
+  position: relative;
+  color: black;
   overflow-x: hidden;
   overflow-x: scroll;
 }
 
-.closeModal {
-  background: palegreen;
-  border: 3px solid #000000;
-  border-radius: 50%;
-  color:black;
-  font-size: 18px;
-  font-weight: bold;
-  height: 40px;
-  padding: 0;
+.close-modal-button{
+  background: #eff67b;
+  border-radius: 8px;
+  color: black;
+  cursor: pointer;
+  font-weight: 700;
+  padding: 0.85rem 1.5rem;
+  text-align: center;
+  text-decoration: none;
+  border: none;
+  height: fit-content;
+  margin-left: 20px;
   position: fixed;
-  right: 60px;
-  top: 60px;
-  width: 40px;
+  right: 30%
 }
 
 .hidden {
@@ -60,7 +71,7 @@
 }
 
 .highlight{
-  background-color: yellowgreen;
+  background-color: #eff67b;
 }
 
 .reset, .peak, .trail{
@@ -68,5 +79,71 @@
 }
 
 .toggleButtonHighlight {
-  background-color: aquamarine;
+  background: #a6b401;
+}
+
+.signal-input-container { 
+  display: flex;
+  flex-direction: row;
+}
+
+.button {
+  background: #b3e7dc;
+  border-radius: 8px;
+  color: black;
+  cursor: pointer;
+  font-weight: 700;
+  padding: 0.85rem 1.5rem;
+  text-align: center;
+  text-decoration: none;
+  border: none;
+  height: fit-content;
+  margin-left: 20px;
+}
+
+.grid-info-container {
+  text-align: center;
+}
+
+.signal-information-container {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  position: relative;
+  width: 70%;
+}
+
+.signal-information {
+  text-align: left;
+}
+
+.signal-information-buttons {
+  position: absolute;
+  bottom: 0;
+  right: 0
+}
+
+.emphasis {
+  color: #a6b401;
+}
+
+.grid-container {
+  display: inline-flex;
+  
+}
+
+.grid {
+  align-items: center;
+  border: 1px #6c0102 solid;
+  width: fit-content;
+  height: fit-content;
+  margin: 20px 20px 40px;
+}
+
+.inner-cell-container {
+  margin: 0
+}
+
+.details-container {
+  padding-top: 10%
 }

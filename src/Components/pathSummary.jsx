@@ -28,6 +28,7 @@ const PathSummary = (paths)=> {
   return(
     <>
       <strong>Valid Paths to a peak</strong>
+      <hr/>
       <button onClick={() => { displayPaths(); } }>Expand {seePathDetails ? <FaCaretUp /> : <FaCaretDown />}</button>
       <div id="pathDetails" className="hidden">
         {paths.length > 0 &&
