@@ -15,11 +15,11 @@ function App() {
 
   const isValidInput = (signals) => {
     const numbersRegex = /^[0-9]+$/
-    const onlyNumbers = signals.map((signal) => numbersRegex.test(signal))
-    const isSameLength = signals.every(({length}) => length != signals[0])
-    const isAboveMax = signals.length <= maxCount && signals[0].length >= maxCount
+    const onlyNumbers = signals.every((signal) => numbersRegex.test(signal))
+    const isSameLength = signals.every((signal) => signal.length === signals[0].length)
+    const isAboveMax = signals.length > maxCount && signals[0].length > maxCount
     
-    if (onlyNumbers.includes(false) || isSameLength === false || isAboveMax){
+    if (!onlyNumbers || !isSameLength || isAboveMax){
       console.log("display error feedback here, only numbers are allowed")
       return false
     }
@@ -29,8 +29,8 @@ function App() {
   }
 
   const processSignalInputs = () => {
-    const signalValueArray = signalValues.trim().split("\n")
-    
+    // const signalValueArray = signalValues.trim().split("\n").replaceAll(/\s/g,'')
+    const signalValueArray = signalValues.split("\n").map(line => line.trim().replace(/\s+/g, '')).filter(line => line.length > 0); 
     if (isValidInput(signalValueArray)) {
       const newInput = signalValueArray.map(row => row.split('').map(Number));
       setProcessedSignals(newInput)
@@ -39,11 +39,12 @@ function App() {
   }
 
   return (
-    <div className="App">
-      <div>
-        <h1>Enter Signal Values</h1>
-          <textarea rows={10} cols={30} values={signalValues}  onChange={(e) => {handleTextChange(e)}} />
-          <button onClick={() => {processSignalInputs()}}>Confirm</button>
+    <div>
+      <h1 className="main-header">Enter Signal Values</h1>
+      <p>Please enter only digits between 1 and 60</p>
+      <div className="signal-input-container">
+        <textarea className="signal-input-area" rows={8} cols={60} values={signalValues} onChange={(e) => {handleTextChange(e)}} />
+        <button className="button" onClick={() => {processSignalInputs()}}>Confirm</button>
       </div>
 
       {

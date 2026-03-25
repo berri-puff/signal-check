@@ -26,16 +26,25 @@ const Grid = ({ processedSignals }) => {
         setHighlightTrailBtn(false)
         break;
       case "trail" :
-         setHighlightResetBtn(false)
+        setHighlightResetBtn(false)
         setHighlightPeakBtn(false)
         setHighlightTrailBtn(true)
         break;
       default:
-         setHighlightResetBtn(false)
+        setHighlightResetBtn(false)
         setHighlightPeakBtn(false)
         setHighlightTrailBtn(false)
     }
-   
+  }
+
+  const shouldHighlight = (rIndex, cIndex) => {
+    if ((toggleMode === "trail" && trailheadData[`${rIndex},${cIndex}`].isTrailhead) ||
+      (toggleMode === "peak" && trailheadData[`${rIndex},${cIndex}`].isAPeak) ) {
+        return true
+      }
+      else {
+        return false
+      }
   }
 
   const { trailheadData, totalPeaks, totalSignalChains } = useMemo(() => {
@@ -119,7 +128,6 @@ const Grid = ({ processedSignals }) => {
           peaksCount += peakCoordinates.size;
           signalChainsCount += validSignalChainPaths;
 
-          console.log(peakCoordinates.size, "in the 0")
           trailheadMap[`${row},${column}`] = {
             isTrailhead: peakCoordinates.size > 0,
             paths: allPathsForThisTrailhead ,
@@ -145,32 +153,39 @@ const Grid = ({ processedSignals }) => {
   }, [grid, rowCount, columnCount]);
  
   return (
-    <div>
-      {processedSignals.map((row, rIndex) => (
-        <div className="row" key={rIndex}>
-          {row.map((value, cIndex) => (
-            <div className={`box  ${
-              (toggleMode === "trail" && trailheadData[`${rIndex},${cIndex}`].isTrailhead) ||
-              (toggleMode === "peak" && trailheadData[`${rIndex},${cIndex}`].isAPeak) 
-              ? "highlight" : ""}`} key={cIndex}>
-              <Cell
-                signalValue={value}
-                row={rIndex}
-                column={cIndex}
-                trailheadInfo={trailheadData[`${rIndex},${cIndex}`]}
-              />
-            </div>
-          ))}
+    <div className="grid-info-container">
+      <div className="signal-information-container">
+        <div className="signal-information">
+          <h3>Total Peaks: <span className="emphasis">{totalPeaks}</span></h3>
+          <h3>Total Distinct Chains: <span className="emphasis">{totalSignalChains}</span></h3>
         </div>
-      ))}
-      <div>
-        <button className={`${highlightResetBtn? "toggleButtonHighlight" : ""}`} onClick={()=> {highlightToggleButtons("none")}}>Reset</button>
-        <button className={`${highlightTrailBtn? "toggleButtonHighlight" : ""}`} onClick={() => {highlightToggleButtons("trail")}}>See all Trailheads</button>
-        <button className={`${highlightPeakBtn? "toggleButtonHighlight" : ""}`} onClick={() => {highlightToggleButtons("peak")}}>See all Peaks</button>
-        <h3>Results</h3>
-        <h4>Total Peaks: {totalPeaks}</h4>
-        <h4>Total Distinct Chains: {totalSignalChains}</h4>
+        <div className="signal-information-buttons">
+          <button className={`button ${highlightTrailBtn? "toggleButtonHighlight" : ""}`} onClick={() => {highlightToggleButtons("trail")}}>See all Trailheads</button>
+          <button className={`button ${highlightPeakBtn? "toggleButtonHighlight" : ""}`} onClick={() => {highlightToggleButtons("peak")}}>See all Peaks</button>
+          <button className={`button ${highlightResetBtn? "toggleButtonHighlight" : ""}`} onClick={()=> {highlightToggleButtons("none")}}>Reset</button>
+        </div>
       </div>
+
+    <div className="grid-container">
+      <div className="grid"> 
+        {processedSignals.map((row, rIndex) => (
+            <div className="row" key={rIndex}>
+              {row.map((value, cIndex) => (
+                <div className={`box  ${
+                shouldHighlight(rIndex, cIndex)
+                  ? "highlight" : ""}`} key={cIndex}>
+                  <Cell
+                    signalValue={value}
+                    row={rIndex}
+                    column={cIndex}
+                    trailheadInfo={trailheadData[`${rIndex},${cIndex}`]}
+                  />
+                </div>
+              ))}
+            </div>
+        ))}
+      </div>
+    </div>
     </div>
   );
 };
