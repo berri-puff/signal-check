@@ -1,13 +1,13 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
+import { FaCaretUp, FaCaretDown} from "react-icons/fa";
 
 const signalCell = ({row, column, signalValue, trailheadInfo}) => {
-
   const [seeToolTip, setToolTip] = useState(false)
   const [mouseLocation, setMouseLocation] = useState({x: 0, y: 0})
   const [displaySignalDetails, setDisplaySignalDetails] = useState(false)
+  const [seePathDetails, setSeePathDetails] = useState(false)
 
   const displayDetails = () => {
-    console.log(trailheadInfo.neighbours)
     setDisplaySignalDetails(true)
   }
 
@@ -39,9 +39,20 @@ const signalCell = ({row, column, signalValue, trailheadInfo}) => {
       return "simple plain number"
     }
   }
+
+  const displayPaths = () => {
+    const pathDetailContainer = document.getElementById("pathDetails")
+    if (seePathDetails) {
+      pathDetailContainer.classList.add("hidden")
+      setSeePathDetails(false) 
+    } else {
+      pathDetailContainer.classList.remove("hidden")
+      setSeePathDetails(true)
+    }
+  }
  
   return(
-    <>
+    <div className="innerContainer">
       <div
         onMouseEnter={(event) => displayHoverDetails(event)}
         onMouseLeave={() => setToolTip(false)}
@@ -80,21 +91,28 @@ const signalCell = ({row, column, signalValue, trailheadInfo}) => {
             )
           })
         }
-        <strong>Valid Paths to a peak</strong>
-        {trailheadInfo.paths.length > 0 &&
-          trailheadInfo.paths.map((path) => {
-            return(
-              <div>
-              <li>
-                {formatPathCoords(path)}
-              </li>
-              </div>
-            )
-          })
+        {
+          trailheadInfo.isTrailhead ? 
+          <>
+            <strong>Valid Paths to a peak</strong>
+            <button onClick={() => { displayPaths(); } }>Expand {seePathDetails ? <FaCaretUp /> : <FaCaretDown />}</button>
+            <div id="pathDetails" className="hidden">
+              {trailheadInfo.paths.length > 0 &&
+                trailheadInfo.paths.map((path) => {
+                  return (
+                    <div>
+                      <li>
+                        {formatPathCoords(path)}
+                      </li>
+                    </div>
+                  );
+                })}
+            </div>
+          </> : null
         }
      </div>
       )}
-    </>
+    </div>
   )
 }
 

@@ -54,3 +54,19 @@
   top: 60px;
   width: 40px;
 }
+
+.hidden {
+  display: none;
+}
+
+.highlight{
+  background-color: yellowgreen;
+}
+
+.reset, .peak, .trail{
+  background-color: #000000;
+}
+
+.toggleButtonHighlight {
+  background-color: aquamarine;
+}

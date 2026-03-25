@@ -1,4 +1,4 @@
-import { useMemo } from "react"
+import { useMemo, useState } from "react"
 import Cell from "./signalCell";
 
 const Grid = ({ processedSignals }) => {
@@ -7,10 +7,42 @@ const Grid = ({ processedSignals }) => {
   const columnCount = processedSignals[0]?.length || 0;
   const directions = [[-1, 0], [1, 0], [0, -1], [0, 1]]; // up, down, left, right
 
+  const [toggleMode, setToggleMode] = useState("none")
+  const [highlightResetBtn, setHighlightResetBtn] = useState(false)
+  const [highlightPeakBtn, setHighlightPeakBtn] = useState(false)
+  const [highlightTrailBtn, setHighlightTrailBtn] = useState(false)
+
+  const highlightToggleButtons = (mode) => {
+    setToggleMode(mode)
+    switch (mode) {
+      case "none": 
+        setHighlightResetBtn(true)
+        setHighlightPeakBtn(false)
+        setHighlightTrailBtn(false)
+        break;
+      case "peak":
+        setHighlightPeakBtn(true)
+        setHighlightResetBtn(false)
+        setHighlightTrailBtn(false)
+        break;
+      case "trail" :
+         setHighlightResetBtn(false)
+        setHighlightPeakBtn(false)
+        setHighlightTrailBtn(true)
+        break;
+      default:
+         setHighlightResetBtn(false)
+        setHighlightPeakBtn(false)
+        setHighlightTrailBtn(false)
+    }
+   
+  }
+
   const { trailheadData, totalPeaks, totalSignalChains } = useMemo(() => {
     let peaksCount = 0;
     let signalChainsCount = 0;
     const trailheadMap = {};
+    const peakCoordinatesGlobal = new Set();
     
     const validNewCoordinates = (newRow, newColumn) => { 
       const inRowRange = newRow >= 0 && newRow < rowCount
@@ -30,7 +62,6 @@ const Grid = ({ processedSignals }) => {
             validNeighbours.push([newRow, newColumn]);
           }
         }
-
       }
       return validNeighbours
     }
@@ -39,6 +70,7 @@ const Grid = ({ processedSignals }) => {
       if (grid[row][column] === 9) {
         const coord = `${row},${column}`;
         peakCoordinates.add(coord);
+        peakCoordinatesGlobal.add(coord)
         return;
       }
 
@@ -87,17 +119,18 @@ const Grid = ({ processedSignals }) => {
           peaksCount += peakCoordinates.size;
           signalChainsCount += validSignalChainPaths;
 
+          console.log(peakCoordinates.size, "in the 0")
           trailheadMap[`${row},${column}`] = {
-            isTrailhead: peakCoordinates.size > 0 ? true : false,
+            isTrailhead: peakCoordinates.size > 0,
             paths: allPathsForThisTrailhead ,
-            isAPeak: grid[row][column] === 9 && peakCoordinates.size > 0 ? true: false,
+            isAPeak: false,
             neighbours: getValidNeighbours(row, column)
           };
         } else {
             trailheadMap[`${row},${column}`] = {
             isTrailhead: false,
             paths: allPathsForThisTrailhead,
-            isAPeak: grid[row][column] === 9 && peakCoordinates.size > 0 ? true: false,
+            isAPeak: grid[row][column] === 9 && peakCoordinatesGlobal.size,
             neighbours: getValidNeighbours(row, column)
           };
         }
@@ -110,13 +143,16 @@ const Grid = ({ processedSignals }) => {
       totalSignalChains: signalChainsCount
     };
   }, [grid, rowCount, columnCount]);
-
+ 
   return (
     <div>
       {processedSignals.map((row, rIndex) => (
         <div className="row" key={rIndex}>
           {row.map((value, cIndex) => (
-            <div className="box" key={cIndex}>
+            <div className={`box  ${
+              (toggleMode === "trail" && trailheadData[`${rIndex},${cIndex}`].isTrailhead) ||
+              (toggleMode === "peak" && trailheadData[`${rIndex},${cIndex}`].isAPeak) 
+              ? "highlight" : ""}`} key={cIndex}>
               <Cell
                 signalValue={value}
                 row={rIndex}
@@ -128,6 +164,9 @@ const Grid = ({ processedSignals }) => {
         </div>
       ))}
       <div>
+        <button className={`${highlightResetBtn? "toggleButtonHighlight" : ""}`} onClick={()=> {highlightToggleButtons("none")}}>Reset</button>
+        <button className={`${highlightTrailBtn? "toggleButtonHighlight" : ""}`} onClick={() => {highlightToggleButtons("trail")}}>See all Trailheads</button>
+        <button className={`${highlightPeakBtn? "toggleButtonHighlight" : ""}`} onClick={() => {highlightToggleButtons("peak")}}>See all Peaks</button>
         <h3>Results</h3>
         <h4>Total Peaks: {totalPeaks}</h4>
         <h4>Total Distinct Chains: {totalSignalChains}</h4>
