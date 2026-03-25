@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { FaCaretUp, FaCaretDown} from "react-icons/fa";
 
-const PathSummary = (paths)=> {
+const PathSummary = ({ paths })=> {
     const [seePathDetails, setSeePathDetails] = useState(false)
 
     const formatPathCoords = (path) => {
