@@ -61,7 +61,6 @@ body {
   text-decoration: none;
   border: none;
   height: fit-content;
-  margin-left: 20px;
   position: fixed;
   right: 30%
 }
@@ -85,6 +84,7 @@ body {
 .signal-input-container { 
   display: flex;
   flex-direction: row;
+  align-items: end;
 }
 
 .button {
@@ -146,4 +146,30 @@ body {
 
 .details-container {
   padding-top: 10%
+}
+
+.expand-button {
+   background: #b3e7dc;
+  border-radius: 8px;
+  color: black;
+  cursor: pointer;
+  font-weight: 700;
+  padding: 4px 10px;
+  text-align: center;
+  text-decoration: none;
+  border: none;
+  height: fit-content;
+  margin-left: 20px;
+}
+
+.expand-icon {
+  vertical-align: bottom;
+}
+
+.signal-value:hover{ 
+  cursor: pointer;
+}
+
+.short-line {
+  width: 150px;
 }

@@ -5,13 +5,7 @@ const PathSummary = ({ paths })=> {
     const [seePathDetails, setSeePathDetails] = useState(false)
 
     const formatPathCoords = (path) => {
-      let pathString = ""
-      for (let row = 0; row < path.length; row++) {
-        for (let col = 0; col < path[row].length; col++) {
-          pathString += "(" + row + "," + col + ")";
-        }
-      }
-      return pathString
+      return path.map(coord => `(${coord[0]}, ${coord[1]})`).join(" -> ")
     }
 
     const displayPaths = () => {
@@ -27,17 +21,20 @@ const PathSummary = ({ paths })=> {
 
   return(
     <>
-      <strong>Valid Paths to a peak</strong>
+      <div>
+        <strong>{paths.length} Paths to a peak</strong>
+        <button className="expand-button" onClick={() => { displayPaths(); } }>Expand {seePathDetails ? <FaCaretUp className="expand-icon"/> : <FaCaretDown className="expand-icon"/>}</button>
+      </div>
       <hr/>
-      <button onClick={() => { displayPaths(); } }>Expand {seePathDetails ? <FaCaretUp /> : <FaCaretDown />}</button>
       <div id="pathDetails" className="hidden">
         {paths.length > 0 &&
           paths.map((path) => {
             return (
               <div>
-                <li>
+                <p>
                   {formatPathCoords(path)}
-                </li>
+                  <hr className="short-line"/>
+                </p>
               </div>
             );
           })}

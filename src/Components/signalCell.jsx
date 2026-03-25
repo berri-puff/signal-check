@@ -12,8 +12,8 @@ const signalCell = ({row, column, signalValue, trailheadInfo}) => {
 
   const displayHoverDetails = (event) => {
     setMouseLocation({
-    x: event.pageX,
-    y: event.pageY,
+    x: event.pageX -100,
+    y: event.pageY -140,
     });
     setToolTip(true);
   }
@@ -36,7 +36,7 @@ const signalCell = ({row, column, signalValue, trailheadInfo}) => {
         onMouseLeave={() => setToolTip(false)}
         onClick={()=> {displayDetails()}}
       >
-        <p >{signalValue}</p>
+        <p className="signal-value">{signalValue}</p>
         <div
           className="tooltip"
           style={{
@@ -58,10 +58,10 @@ const signalCell = ({row, column, signalValue, trailheadInfo}) => {
 
           <div className="details-container"> 
             <h3 className="emphasis">This is a {returnPeakOrTrailheadStatement()}</h3>
-            <p>Co-ordinates: ({row}, {column})</p>
+            <p>Co-ordinate: ({row}, {column})</p>
             <strong>Valid neighbours coordinates</strong>
             <hr/>
-            {trailheadInfo.neighbours.length > 0 &&
+            {trailheadInfo.neighbours.length > 0 ?
               trailheadInfo.neighbours.map((neighbour) => {
                 return(
                   <div>
@@ -70,7 +70,11 @@ const signalCell = ({row, column, signalValue, trailheadInfo}) => {
                   </p>
                   </div>
                 )
-              })
+              }):
+              <div>
+                <p className="emphasis">No Neighbours</p>
+              </div>
+            
             }
             
             {
