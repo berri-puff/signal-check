@@ -5,6 +5,10 @@ const signalCell = ({row, column, signalValue, trailheadInfo}) => {
   const [seeToolTip, setToolTip] = useState(false)
   const [mouseLocation, setMouseLocation] = useState({x: 0, y: 0})
   const [displaySignalDetails, setDisplaySignalDetails] = useState(false)
+  const isTrailhead = trailheadInfo.isTrailhead
+  const isAPeak = trailheadInfo.isAPeak
+  const validNeighbours = trailheadInfo.neighbours || []
+  const validPaths = trailheadInfo.paths
 
   const displayDetails = () => {
     setDisplaySignalDetails(true)
@@ -12,20 +16,20 @@ const signalCell = ({row, column, signalValue, trailheadInfo}) => {
 
   const displayHoverDetails = (event) => {
     setMouseLocation({
-    x: event.pageX -100,
-    y: event.pageY -140,
+      x: event.pageX -100,
+      y: event.pageY -140,
     });
     setToolTip(true);
   }
 
   const returnPeakOrTrailheadStatement = () => {
-    if (trailheadInfo.isTrailhead) {
+    if (isTrailhead) {
       return "trailhead"
     }
-    else if (trailheadInfo.isAPeak) {
+    else if (isAPeak) {
       return "Peak"
     } else {
-      return "simple plain number"
+      return "neither a peak or trailhead"
     }
   }
  
@@ -52,38 +56,37 @@ const signalCell = ({row, column, signalValue, trailheadInfo}) => {
       </div>
 
       {displaySignalDetails && (
-      <div className="detail-modal">
-        <div className="detail-modal-info">
-          <button className="close-modal-button" onClick={() => setDisplaySignalDetails(false)} >Close</button>
+        <div className="detail-modal">
+          <div className="detail-modal-info">
+            <button className="close-modal-button" onClick={() => setDisplaySignalDetails(false)} >Close</button>
 
-          <div className="details-container"> 
-            <h3 className="emphasis">This is a {returnPeakOrTrailheadStatement()}</h3>
-            <p>Co-ordinate: ({row}, {column})</p>
-            <strong>Valid neighbours coordinates</strong>
-            <hr/>
-            {trailheadInfo.neighbours.length > 0 ?
-              trailheadInfo.neighbours.map((neighbour) => {
-                return(
-                  <div>
-                  <p>
-                    {"(" + neighbour.toString(",") + ")"}
-                  </p>
-                  </div>
-                )
-              }):
-              <div>
-                <p className="emphasis">No Neighbours</p>
-              </div>
-            
-            }
-            
-            {
-              trailheadInfo.isTrailhead ? <PathSummary paths={trailheadInfo.paths}/>
-              : null
-            }
+            <div className="details-container"> 
+              <h3 className="emphasis">This is a {returnPeakOrTrailheadStatement()}</h3>
+              <p>Co-ordinate: ({row}, {column})</p>
+              <strong>Valid neighbours coordinates</strong>
+              <hr/>
+              {validNeighbours.length > 0 ?
+                validNeighbours.map((neighbour) => {
+                  return(
+                    <div>
+                    <p>
+                      {"(" + neighbour.toString(",") + ")"}
+                    </p>
+                    </div>
+                  )
+                }):
+                <div>
+                  <p className="emphasis">No Neighbours</p>
+                </div>
+              
+              }
+              {
+                isTrailhead ? <PathSummary paths={validPaths}/>
+                : null
+              }
+            </div>
           </div>
         </div>
-      </div>
       )}
     </div>
   )

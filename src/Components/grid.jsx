@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react"
-import Cell from "./signalCell";
+import SignalCell from "./SignalCell";
 
 const Grid = ({ processedSignals }) => {
   const grid = processedSignals;
@@ -160,9 +160,9 @@ const Grid = ({ processedSignals }) => {
           <h3>Total Distinct Chains: <span className="emphasis">{totalSignalChains}</span></h3>
         </div>
         <div className="signal-information-buttons">
-          <button className={`button ${highlightTrailBtn? "toggleButtonHighlight" : ""}`} onClick={() => {highlightToggleButtons("trail")}}>See all Trailheads</button>
-          <button className={`button ${highlightPeakBtn? "toggleButtonHighlight" : ""}`} onClick={() => {highlightToggleButtons("peak")}}>See all Peaks</button>
-          <button className={`button ${highlightResetBtn? "toggleButtonHighlight" : ""}`} onClick={()=> {highlightToggleButtons("none")}}>Reset</button>
+          <button className={`button ${highlightTrailBtn? "toggleButtonHighlight" : null}`} onClick={() => {highlightToggleButtons("trail")}}>See all Trailheads</button>
+          <button className={`button ${highlightPeakBtn? "toggleButtonHighlight" : null}`} onClick={() => {highlightToggleButtons("peak")}}>See all Peaks</button>
+          <button className={`button ${highlightResetBtn? "toggleButtonHighlight" : null}`} onClick={()=> {highlightToggleButtons("none")}}>Reset</button>
         </div>
       </div>
 
@@ -174,7 +174,7 @@ const Grid = ({ processedSignals }) => {
                 <div className={`box  ${
                 shouldHighlight(rIndex, cIndex)
                   ? "highlight" : ""}`} key={cIndex}>
-                  <Cell
+                  <SignalCell
                     signalValue={value}
                     row={rIndex}
                     column={cIndex}
