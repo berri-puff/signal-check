@@ -120,6 +120,7 @@ const Grid = ({ processedSignals }) => {
       for (let column = 0; column < columnCount; column++) {
         const peakCoordinates = new Set();
         const allPathsForThisTrailhead = [];
+
         if (grid[row][column] === 0) {
           calculatePeaks(row, column, peakCoordinates);
 
@@ -137,7 +138,7 @@ const Grid = ({ processedSignals }) => {
         } else {
             trailheadMap[`${row},${column}`] = {
             isTrailhead: false,
-            paths: allPathsForThisTrailhead,
+            paths: [],
             isAPeak: grid[row][column] === 9 && peakCoordinatesGlobal.size,
             neighbours: getValidNeighbours(row, column)
           };
@@ -153,11 +154,13 @@ const Grid = ({ processedSignals }) => {
   }, [grid, rowCount, columnCount]);
  
   return (
-    <div className="grid-info-container">
+    <div className="main-grid-container">
       <div className="signal-information-container">
         <div className="signal-information">
           <h3>Total Peaks: <span className="emphasis">{totalPeaks}</span></h3>
+          <small>This is the total number of 9's that can be accessed from a valid signal chain through +1 increments from 0</small>
           <h3>Total Distinct Chains: <span className="emphasis">{totalSignalChains}</span></h3>
+          <small>Number of total distinct valid signal paths a 0 can take to reach a peak</small>
         </div>
         <div className="signal-information-buttons">
           <button className={`button ${highlightTrailBtn? "toggleButtonHighlight" : null}`} onClick={() => {highlightToggleButtons("trail")}}>See all Trailheads</button>
@@ -166,26 +169,24 @@ const Grid = ({ processedSignals }) => {
         </div>
       </div>
 
-    <div className="grid-container">
-      <div className="grid"> 
-        {processedSignals.map((row, rIndex) => (
-            <div className="row" key={rIndex}>
-              {row.map((value, cIndex) => (
-                <div className={`box  ${
-                shouldHighlight(rIndex, cIndex)
-                  ? "highlight" : ""}`} key={cIndex}>
-                  <SignalCell
-                    signalValue={value}
-                    row={rIndex}
-                    column={cIndex}
-                    trailheadInfo={trailheadData[`${rIndex},${cIndex}`]}
-                  />
-                </div>
-              ))}
-            </div>
-        ))}
+      <div className="grid-container">
+        <div className="grid"> 
+          {processedSignals.map((row, rIndex) => (
+              <div className="row" key={rIndex}>
+                {row.map((value, cIndex) => (
+                  <div className={`box ${shouldHighlight(rIndex, cIndex) ? "toggleButtonHighlight" : ""}`} key={cIndex}>
+                    <SignalCell
+                      signalValue={value}
+                      row={rIndex}
+                      column={cIndex}
+                      trailheadInfo={trailheadData[`${rIndex},${cIndex}`]}
+                    />
+                  </div>
+                ))}
+              </div>
+          ))}
+        </div>
       </div>
-    </div>
     </div>
   );
 };

@@ -5,9 +5,10 @@ const signalCell = ({row, column, signalValue, trailheadInfo}) => {
   const [seeToolTip, setToolTip] = useState(false)
   const [mouseLocation, setMouseLocation] = useState({x: 0, y: 0})
   const [displaySignalDetails, setDisplaySignalDetails] = useState(false)
+  
   const isTrailhead = trailheadInfo.isTrailhead
   const isAPeak = trailheadInfo.isAPeak
-  const validNeighbours = trailheadInfo.neighbours || []
+  const validNeighbours = trailheadInfo.neighbours
   const validPaths = trailheadInfo.paths
 
   const displayDetails = () => {
@@ -51,16 +52,16 @@ const signalCell = ({row, column, signalValue, trailheadInfo}) => {
           }}
         >
           <p><strong>Co-ordinates: <span>({row}, {column})</span></strong></p>
-          <p>Click to see more</p>
+          <small>Click to see more</small>
         </div>
       </div>
 
-      {displaySignalDetails && (
+      {displaySignalDetails ? (
         <div className="detail-modal">
           <div className="detail-modal-info">
             <button className="close-modal-button" onClick={() => setDisplaySignalDetails(false)} >Close</button>
 
-            <div className="details-container"> 
+            <div className="detail-container"> 
               <h3 className="emphasis">This is a {returnPeakOrTrailheadStatement()}</h3>
               <p>Co-ordinate: ({row}, {column})</p>
               <strong>Valid neighbours coordinates</strong>
@@ -87,7 +88,7 @@ const signalCell = ({row, column, signalValue, trailheadInfo}) => {
             </div>
           </div>
         </div>
-      )}
+      ) : null}
     </div>
   )
 }

@@ -20,8 +20,8 @@ body {
   background-color: #b3e7dc;
   width:fit-content;
   height: fit-content;
-  border-radius: 10%;
-  padding: 10px 10px;
+  border-radius: 10px;
+  padding: 0 10px 10px;
   .p {
     color: black
   }
@@ -109,7 +109,7 @@ body {
   color: white
 }
 
-.grid-info-container {
+.main-grid-container {
   text-align: center;
 }
 
@@ -118,7 +118,7 @@ body {
   flex-direction: row;
   justify-content: space-between;
   position: relative;
-  width: 70%;
+  width: 80%;
 }
 
 .signal-information {
@@ -152,7 +152,7 @@ body {
   margin: 0
 }
 
-.details-container {
+.detail-container {
   padding-top: 10%
 }
 
